@@ -78,7 +78,7 @@ function install_ubuntu_base {
 
     update_and_upgrade
 
-    system_set_hostname “${hostname}”
+    system_set_hostname "${hostname}"
     system_set_timezone "${timezone}"
 
     # setup unattended upgrades
