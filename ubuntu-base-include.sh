@@ -65,6 +65,11 @@ function enable_ufw {
     ufw --force enable
 }
 
+function default_editor_vim {
+    # Set vim.basic to be the default editor
+    update-alternatives --set editor /usr/bin/vim.basic
+}
+
 function install_ubuntu_base {
     # Performs setup and configuration common to all Ubuntu nodes
 
@@ -89,5 +94,6 @@ function install_ubuntu_base {
     enable_ssh "${username}" "${ssh_pubkey}"
     postfix_install_loopback_only
     enable_ufw
+    default_editor_vim
     all_set
 }
