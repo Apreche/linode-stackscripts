@@ -95,5 +95,4 @@ function install_ubuntu_base {
     postfix_install_loopback_only
     enable_ufw
     default_editor_vim
-    all_set
 }

@@ -16,3 +16,4 @@ source <ssinclude StackScriptID=644166>
 
 # Install base ubuntu image and nothing else
 install_ubuntu_base "$HOSTNAME" "$USERNAME" "$PASSWORD" "$TIMEZONE" "$SSH_PUBKEY"
+all_set
