@@ -129,3 +129,4 @@ function setup_user {
 
 setup_user
 all_set
+(sleep 10; shutdown -r -t 0) &

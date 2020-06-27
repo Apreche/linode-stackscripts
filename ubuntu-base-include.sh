@@ -70,6 +70,13 @@ function default_editor_vim {
     update-alternatives --set editor /usr/bin/vim.basic
 }
 
+function trim_motd {
+    # Remove some extra stuff from the MOTD
+    sed -i 's/ENABLED=1/ENABLED=0/' /etc/default/motd-news
+    chmod -x /etc/update-motd.d/10-help-text
+    rm /etc/update-motd.d/50-landscape-sysinfo
+}
+
 function install_ubuntu_base {
     # Performs setup and configuration common to all Ubuntu nodes
 
@@ -95,4 +102,5 @@ function install_ubuntu_base {
     postfix_install_loopback_only
     enable_ufw
     default_editor_vim
+    trim_motd
 }
