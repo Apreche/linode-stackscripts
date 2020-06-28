@@ -23,86 +23,101 @@ add-apt-repository ppa:git-core/ppa -y
 add-apt-repository ppa:deadsnakes/ppa -y
 
 # PostgreSQL apt repo
-apt-get install -y postgresql-common
-yes | exec /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+apt-get install curl ca-certificates gnupg
+curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+sh -c 'echo "deb [arch=amd64] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 
 # Install packages
 apt-get update
+apt-get install -y build-essential
 apt-get install -y screen
 apt-get install -y vim git postgresql-12
-apt-get install -y build-essential
-apt-get install -y python3.8 python3.8-dev
-# Install dependencies of python packages
+apt-get install -y python3 python3-dev python3-distutils python3-testresources python3-venv
 debian_upgrade
 
-# Python Setup
+# Set default Python and install pip
 update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
 update-alternatives --set python /usr/bin/python3.8
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-/usr/bin/env python get-pip.py
+python get-pip.py
 rm get-pip.py
 
 function setup_gitconfig {
-    su $USERNAME -c "git clone https://gist.github.com/889248.git ~/gittemp"
-    su $USERNAME -c "mv ~/gittemp/gitconfig ~/.gitconfig"
-    su $USERNAME -c "rm -rf ~/gittemp"
+    git clone https://gist.github.com/889248.git ~/gittemp
+    cp ~/gittemp/gitconfig /home/$USERNAME/.gitconfig
+    chown $USERNAME:$USERNAME /home/$USERNAME/.gitconfig
+    chmod 644 /home/$USERNAME/.gitconfig
+    rm -rf ~/gittemp
 }
 
 function setup_bashalias {
-    su $USERNAME -c "git clone https://gist.github.com/1239622.git ~/gittemp"
-    su $USERNAME -c "mv ~/gittemp/bash_aliases ~/.bash_aliases"
-    su $USERNAME -c "rm -rf ~/gittemp"
+    git clone https://gist.github.com/1239622.git ~/gittemp
+    cp ~/gittemp/bash_aliases /home/$USERNAME/.bash_aliases
+    chown $USERNAME:$USERNAME /home/$USERNAME/.bash_aliases
+    chmod 644 /home/$USERNAME/.bash_aliases
+    rm -rf ~/gittemp
 }
 
 function setup_bashrc {
-    su $USERNAME -c "git clone https://gist.github.com/09eb1865347cdd6939186f100c8e654c.git ~/gittemp"
-    su $USERNAME -c "mv ~/gittemp/.bashrc ~/.bashrc"
-    su $USERNAME -c "rm -rf ~/gittemp"
+    git clone https://gist.github.com/09eb1865347cdd6939186f100c8e654c.git ~/gittemp
+    cp ~/gittemp/.bashrc /home/$USERNAME/.bashrc
+    chown $USERNAME:$USERNAME /home/$USERNAME/.bashrc
+    chmod 644 /home/$USERNAME/.bashrc
+    rm -rf ~/gittemp
 }
 
 function setup_localbin {
-    su $USERNAME -c "mkdir ~/bin"
-    su $USERNAME -c "git clone https://gist.github.com/19495f6832534bfa45bd60835a233043.git ~/gittemp"
-    su $USERNAME -c "mv ~/gittemp/create_db_user.sh ~/bin/create_db_user.sh"
-    su $USERNAME -c "chmod 755 ~/bin/create_db_user.sh"
-    su $USERNAME -c "rm -rf ~/gittemp"
+    mkdir /home/$USERNAME/bin
+    chown $USERNAME:$USERNAME /home/$USERNAME/bin
 }
 
 function setup_projectenv {
-    su $USERNAME -c "mkdir ~/.project_env"
+    mkdir /home/$USERNAME/.project_env
+    chown $USERNAME:$USERNAME /home/$USERNAME/.project_env
 }
 
 function setup_screenrc {
-    su $USERNAME -c "git clone https://gist.github.com/1921155.git ~/gittemp"
-    su $USERNAME -c "mv ~/gittemp/screenrc ~/.screenrc"
-    su $USERNAME -c "rm -f ~/gittemp"
+    git clone https://gist.github.com/1921155.git ~/gittemp
+    cp ~/gittemp/screenrc /home/$USERNAME/.screenrc
+    chown $USERNAME:$USERNAME /home/$USERNAME/.screenrc
+    chmod 644 /home/$USERNAME/.screenrc
+    rm -rf ~/gittemp
 }
 
 function setup_psqlrc {
-    su $USERNAME -c "git clone https://gist.github.com/32fdb27073ae86b3fb017f2d2202da01.git ~/gittemp"
-    su $USERNAME -c "mv ~/gittemp/.psqlrc ~/.psqlrc"
-    su $USERNAME -c "rm -rf ~/gittemp"
+    git clone https://gist.github.com/32fdb27073ae86b3fb017f2d2202da01.git ~/gittemp
+    cp ~/gittemp/.psqlrc /home/$USERNAME/.psqlrc
+    chown $USERNAME:$USERNAME /home/$USERNAME/.psqlrc
+    chmod 644 /home/$USERNAME/.psqlrc
+    rm -rf ~/gittemp
 }
 
 function setup_pipconfig {
-    su $USERNAME -c "git clone https://gist.github.com/8c33159a238b5d052fe84fecc9b5fd1e.git ~/gittemp"
-    su $USERNAME -c "mkdir ~/.pip"
-    su $USERNAME -c "mv ~/gittemp/pip.conf ~/.pip/pip.conf"
-    su $USERNAME -c "rm -rf ~/gittemp"
+    git clone https://gist.github.com/8c33159a238b5d052fe84fecc9b5fd1e.git ~/gittemp
+    mkdir -p /home/$USERNAME/.pip
+    chown $USERNAME:$USERNAME /home/$USERNAME/.pip 
+    chmod 755 /home/$USERNAME/.pip
+    cp ~/gittemp/pip.conf /home/$USERNAME/.pip/pip.conf
+    chown $USERNAME:$USERNAME /home/$USERNAME/.pip/pip.conf
+    chmod 644 /home/$USERNAME/.pip/pip.conf
+    rm -rf ~/gittemp
 }
 
 function setup_poetry {
-    su $USERNAME -c "wget https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py --output-document='~/get-poetry.py'"
-    su $USERNAME -c "python ~/get-poetry.py"
-    su $USERNAME -c "rm get-poetry.py"
+    wget https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py --output-document="/home/$USERNAME/get-poetry.py"
+    chown $USERNAME:$USERNAME /home/$USERNAME/get-poetry.py
+    su $USERNAME -c "yes no | python /home/$USERNAME/get-poetry.py"
+    rm /home/$USERNAME/get-poetry.py
 }
 
 function setup_ipython {
     su $USERNAME -c "pip install --user ipython"
-    su $USERNAME -c "ipython profile create"
-    su $USERNAME -c "git clone https://gist.github.com/02801160aadb5089d77e.git ~/gittemp"
-    su $USERNAME -c "mv ~/gittemp/ipython_config.py ~/.ipython/profile_default/ipython_config.py"
-    su $USERNAME -c "rm -rf ~/gittemp"
+    su $USERNAME -c "/home/$USERNAME/.local/bin/ipython profile create"
+    git clone https://gist.github.com/02801160aadb5089d77e.git ~/gittemp
+    cp ~/gittemp/ipython_config.py /home/$USERNAME/.ipython/profile_default/ipython_config.py
+    chown $USERNAME:$USERNAME /home/$USERNAME/.ipython/profile_default/ipython_config.py
+    chmod 644 /home/$USERNAME/.ipython/profile_default/ipython_config.py
+    rm -rf ~/gittemp
 }
 
 function setup_vimrc {
@@ -111,22 +126,30 @@ function setup_vimrc {
     su $USERNAME -c "pip install --user -r ~/.vim/requirements.txt"
     su $USERNAME -c "ln -s ~/.config/flake8 ~/.vim/flake8"
     su $USERNAME -c "vim +'PlugInstall --sync' +qall"
+    su $USERNAME -c "echo 2 | select-editor"
 }
 
-function setup_user {
-    setup_gitconfig
-    setup_bashalias
-    setup_bashrc
-    setup_localbin
-    setup_projectenv
-    setup_screenrc
-    setup_psqlrc
-    setup_pipconfig
-    setup_poetry
-    setup_ipython
-    setup_vimrc
+function setup_postgres_user {
+    git clone https://gist.github.com/19495f6832534bfa45bd60835a233043.git ~/gittemp
+    cp ~/gittemp/create_db_user.sh /home/$USERNAME/bin/create_db_user
+    chown $USERNAME:$USERNAME /home/$USERNAME/bin/create_db_user
+    chmod 755 /home/$USERNAME/bin/create_db_user
+    rm -rf ~/gittemp
+    su postgres -c "exec /home/$USERNAME/bin/create_db_user $USERNAME"
+    echo "ALTER USER $USERNAME with SUPERUSER;" | su postgres -c psql
 }
 
-setup_user
+setup_gitconfig
+setup_bashalias
+setup_bashrc
+setup_localbin
+setup_projectenv
+setup_screenrc
+setup_psqlrc
+setup_pipconfig
+setup_poetry
+setup_ipython
+setup_vimrc
+setup_postgres_user
 all_set
-(sleep 10; shutdown -r -t 0) &
+(sleep 30; shutdown -r -t 0) &
