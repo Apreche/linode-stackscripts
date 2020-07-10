@@ -77,6 +77,14 @@ function trim_motd {
     rm /etc/update-motd.d/50-landscape-sysinfo
 }
 
+function setup_screenrc {
+    git clone https://gist.github.com/1921155.git ~/gittemp
+    cp ~/gittemp/screenrc /home/$USERNAME/.screenrc
+    chown $USERNAME:$USERNAME /home/$USERNAME/.screenrc
+    chmod 644 /home/$USERNAME/.screenrc
+    rm -rf ~/gittemp
+}
+
 function install_ubuntu_base {
     # Performs setup and configuration common to all Ubuntu nodes
 
