@@ -77,6 +77,12 @@ function trim_motd {
     rm /etc/update-motd.d/50-landscape-sysinfo
 }
 
+function figlet_motd {
+    apt-get install -y figlet
+    echo 'figlet `hostname`' > /etc/update-motd.d/05-figlet-hostname
+    chmod 755 /etc/update-motd.d/05-figlet-hostname
+}
+
 function setup_screenrc {
     git clone https://gist.github.com/1921155.git ~/gittemp
     cp ~/gittemp/screenrc /home/$USERNAME/.screenrc
@@ -111,4 +117,5 @@ function install_ubuntu_base {
     enable_ufw
     default_editor_vim
     trim_motd
+    figlet_motd
 }
